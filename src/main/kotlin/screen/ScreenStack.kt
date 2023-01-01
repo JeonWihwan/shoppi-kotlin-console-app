@@ -7,7 +7,7 @@ object ScreenStack {
     fun push(screen: Screen) {
         screenStack.add(screen)
     }
-    fun pop(screen: Screen) {
+    fun pop() {
         screenStack.removeLastOrNull()
     }
     fun peek() : Screen? {

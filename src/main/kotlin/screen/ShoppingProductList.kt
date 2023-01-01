@@ -6,7 +6,7 @@ import data.Product
 import extensions.getNotEmptyInt
 import extensions.getNotEmptyString
 
-class ShoppingProductList : Screen() {
+class ShoppingProductList(private val selectedCategory: String) : Screen() {
     private val products = arrayOf(
         Product("패션", "겨울 패딩"),
         Product("패션", "겨울 패딩1"),
@@ -19,7 +19,7 @@ class ShoppingProductList : Screen() {
         product.categoryLabel
     }
 
-    fun showProducts(selectedCategory: String) {
+    fun showProducts() {
         ScreenStack.push(this)
         val categoryProducts = categories[selectedCategory]
         if(!categoryProducts.isNullOrEmpty()) {
@@ -36,13 +36,13 @@ class ShoppingProductList : Screen() {
                 println("${index}. ${product.name}")
             }
 
-            showCartOption(categoryProducts, selectedCategory)
+            showCartOption(categoryProducts)
         } else {
            showEmptyProductMessage(selectedCategory)
         }
     }
 
-    private fun showCartOption(categoryProducts: List<Product>, selectedCategory: String) {
+    private fun showCartOption(categoryProducts: List<Product>) {
         println("""
             $LINE_DIVIDER
             장바구니에 담을 상품 번호를 선택해주세요.
@@ -52,16 +52,19 @@ class ShoppingProductList : Screen() {
         categoryProducts.getOrNull(selectedIndex)?.let { product ->
             CartItems.addProduct(product)
             println("=> 장바구니로 이동하시려면 #을, 계속 쇼핑하시려면 *을 입력해주세요")
-        }
 
-        val answer = readLine().getNotEmptyString()
-        if(answer == "#") {
-            val shoppingCart = ShoppingCart()
-            shoppingCart.showCartItem()
-        } else if (answer == "*"){
-            showProducts(selectedCategory)
-        } else {
-            // TODO 그 외 값을 입력한 경우에 대한 처리
+            val answer = readLine().getNotEmptyString()
+            if(answer == "#") {
+                val shoppingCart = ShoppingCart()
+                shoppingCart.showCartItem()
+            } else if (answer == "*"){
+                showProducts()
+            } else {
+                // TODO 그 외 값을 입력한 경우에 대한 처리
+            }
+        } ?: kotlin.run {
+            println("$selectedIndex 번은 목록에 없는 상품 번호 입니다. 다시 입력해주세요.")
+            showProducts()
         }
 
     }
